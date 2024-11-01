@@ -1,0 +1,169 @@
+import java.util.*;
+
+class Edge implements Comparable<Edge> 
+{
+    int source, target, weight;
+
+    Edge(int source, int target, int weight) 
+    {
+        this.source = source;
+        this.target = target;
+        this.weight = weight;
+    }
+    public int compareTo(Edge other)//to sort edges 
+    {
+        return this.weight - other.weight;
+    }
+}
+
+class Graph 
+{
+    private final int vertices;
+    private final List<Edge> edges;
+
+    Graph(int vertices) 
+    {
+        this.vertices = vertices;
+        edges = new ArrayList<>();
+    }
+
+
+    void addEdge(int source, int target, int weight) 
+    {
+        edges.add(new Edge(source, target, weight));
+    }
+
+    void DFS(int startVertex) 
+    {
+        List<List<Integer>> adjList = buildAdjList();
+        boolean[] visited = new boolean[vertices];
+        DFSUtil(startVertex, visited, adjList);
+    }
+
+    private void DFSUtil(int vertex, boolean[] visited, List<List<Integer>> adjList) 
+    {
+        visited[vertex] = true;
+        System.out.print(vertex + " ");
+        
+        for (int adj : adjList.get(vertex)) 
+        {
+            if (!visited[adj]) 
+            {
+                DFSUtil(adj, visited, adjList);
+            }
+        }
+    }
+
+    private List<List<Integer>> buildAdjList() 
+    {
+        List<List<Integer>> adjList = new ArrayList<>();
+        for (int i = 0; i < vertices; i++) 
+        {
+            adjList.add(new LinkedList<>());
+        }
+        for (Edge edge : edges) 
+        {
+            adjList.get(edge.source).add(edge.target);
+            adjList.get(edge.target).add(edge.source);
+        }
+        return adjList;
+    }
+    
+    void kruskalMST() 
+    {
+        List<Edge> mst = new ArrayList<>();
+        Collections.sort(edges); // Sort edges by weight
+
+        UnionFind uf = new UnionFind(vertices);
+
+        for (Edge edge : edges) 
+        {
+            int rootSource = uf.find(edge.source);
+            int rootTarget = uf.find(edge.target);
+
+            // If including this edge does not form a cycle, include it in the MST
+            if (rootSource != rootTarget) 
+            {
+                mst.add(edge);
+                uf.union(rootSource, rootTarget);
+            }
+        }
+
+        // Print the MST
+        System.out.println("Edge \tWeight");
+        for (Edge edge : mst) 
+        {
+            System.out.println(edge.source + " - " + edge.target + "\t" + edge.weight);
+        }
+    }
+
+    public static void main(String[] args) 
+    {
+        Graph graph = new Graph(5);
+
+        // Adding edges with weights
+        graph.addEdge(0, 1, 2);
+        graph.addEdge(0, 2, 3);
+        graph.addEdge(1, 2, 1);
+        graph.addEdge(1, 3, 4);
+        graph.addEdge(1, 4, 5);
+        graph.addEdge(2, 4, 7);
+        graph.addEdge(3, 4, 9);
+
+        System.out.println("Following is Depth First Traversal (starting from vertex 2):");
+        graph.DFS(2);
+
+        System.out.println("\n\nKruskal's Minimum Spanning Tree:");
+        graph.kruskalMST();
+    }
+}
+
+// Union-Find (Disjoint Set Union) data structure
+class UnionFind 
+{
+    private final int[] parent, rank;
+
+    UnionFind(int size) 
+    {
+        parent = new int[size];
+        rank = new int[size];
+        for (int i = 0; i < size; i++) 
+        {
+            parent[i] = i;
+            rank[i] = 0;
+        }
+    }
+
+    int find(int x) 
+    {
+        if (parent[x] != x) 
+        {
+            parent[x] = find(parent[x]); // Path compression
+        }
+        return parent[x];
+    }
+
+    void union(int x, int y) 
+    {
+        int rootX = find(x);
+        int rootY = find(y);
+
+        // Union by rank
+        if (rootX != rootY) 
+        {
+            if (rank[rootX] > rank[rootY]) 
+            {
+                parent[rootY] = rootX;
+            } 
+            else if (rank[rootX] < rank[rootY]) 
+            {
+                parent[rootX] = rootY;
+            } 
+            else 
+            {
+                parent[rootY] = rootX;
+                rank[rootX]++;
+            }
+        }
+    }
+}
