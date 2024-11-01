@@ -1,0 +1,62 @@
+import java.util.*;
+
+class Graph 
+{
+    int vertices;
+    List<List<Integer>> adjList;
+
+    Graph(int vertices) 
+    {
+        this.vertices = vertices;
+        adjList = new ArrayList<>(vertices);
+        for (int i = 0; i < vertices; i++) 
+        {
+            adjList.add(new LinkedList<>());
+        }
+    }
+
+    void addEdge(int source, int destination) 
+    {
+        adjList.get(source).add(destination);
+        adjList.get(destination).add(source);
+    }
+
+    void BFS(int startVertex) 
+    {
+        boolean[] visited = new boolean[vertices];
+        Queue<Integer> queue = new LinkedList<>();
+
+        visited[startVertex] = true;
+        queue.add(startVertex);
+
+        while (!queue.isEmpty()) 
+        {
+            int vertex = queue.poll();
+            System.out.print(vertex + " ");
+
+            for (int adj : adjList.get(vertex)) 
+            {
+                if (!visited[adj]) 
+                {
+                    visited[adj] = true;
+                    queue.add(adj);
+                }
+            }
+        }
+    }
+
+    public static void main(String[] args) 
+    {
+        Graph graph = new Graph(5);
+
+        graph.addEdge(0, 1);
+        graph.addEdge(0, 2);
+        graph.addEdge(0, 3);
+        graph.addEdge(1, 4);
+        graph.addEdge(2, 4);
+        graph.addEdge(3, 4);
+
+        System.out.println("Following is Breadth First Traversal (starting from vertex 2):");
+        graph.BFS(2);
+    }
+}
