@@ -87,6 +87,7 @@ public class BinarySearchTree
 	        return -1;
 	   
 	    return Math.max(HeightOfNode(root.left), HeightOfNode(root.right)) + 1 ;
+	}
     void PreOrderTraversal(Node root)
     {
         if (root == null)
