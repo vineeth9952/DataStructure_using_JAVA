@@ -67,13 +67,26 @@ public class BinarySearchTree
 	int minValue(Node root)
 	{
 	    int min = root.data;
-	    while(root.left !- null)
+	    while(root.left != null)
 	    {
 	        root = root.left;
 	        min = root.data;
 	    }
 	    return min;
 	}
+	int SumOfNodes(Node root)
+	{
+	    if (root == null)
+	        return 0;
+	   
+	    return root.data + SumOfNodes(root.left) + SumOfNodes(root.right);
+	}
+	int HeightOfNode(Node root)
+	{
+	    if (root == null)
+	        return -1;
+	   
+	    return Math.max(HeightOfNode(root.left), HeightOfNode(root.right)) + 1 ;
     void PreOrderTraversal(Node root)
     {
         if (root == null)
@@ -118,12 +131,12 @@ public class BinarySearchTree
         System.out.print("\nInorder Traversal :- ");
         bst.InOrderTraversal(bst.root);
         
-        bst.root = bst.Deletion(bst.root, 18);
+        // bst.root = bst.Deletion(bst.root, 7);
         
-        System.out.print("\nInorder Traversal :- ");
-        bst.InOrderTraversal(bst.root);
+        // System.out.print("\nInorder Traversal :- ");
+        // bst.InOrderTraversal(bst.root);
         
-        
+        System.out.print("\n"+bst.SumOfNodes(bst.root));
         
 	}
 }
